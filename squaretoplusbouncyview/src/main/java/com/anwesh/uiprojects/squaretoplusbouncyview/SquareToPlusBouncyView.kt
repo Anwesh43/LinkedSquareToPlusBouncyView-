@@ -41,7 +41,7 @@ fun Canvas.drawVerticalHorizontalLine(i : Int, scale : Float, size : Float, pain
     restore()
 }
 
-fun Canvas.drawVHLNode(i : Int, scale : Float, paint : Paint) {
+fun Canvas.drawSTPBNode(i : Int, scale : Float, paint : Paint) {
     val w : Float = width.toFloat()
     val h : Float = height.toFloat()
     val gap : Float = w / (nodes + 1)
@@ -119,6 +119,48 @@ class SquareToPlusBouncyView(ctx : Context) : View(ctx) {
             if (animated) {
                 animated = false
             }
+        }
+    }
+
+    data class STPBNode(var i : Int, val state : State = State()) {
+
+        private var next : STPBNode? = null
+        private var prev : STPBNode? = null
+
+        init {
+            addNeighbor()
+        }
+
+        fun addNeighbor() {
+            if (i < nodes - 1) {
+                next = STPBNode(i + 1)
+                next?.prev = this
+            }
+        }
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            canvas.drawSTPBNode(i, state.scale, paint)
+            next?.draw(canvas, paint)
+        }
+
+        fun update(cb : (Float) -> Unit) {
+            state.update(cb)
+        }
+
+        fun startUpdating(cb : () -> Unit) {
+            state.startUpdating(cb)
+        }
+
+        fun getNext(dir : Int, cb : () -> Unit) : STPBNode {
+            var curr : STPBNode? = prev
+            if (dir == 1) {
+                curr = next
+            }
+            if (curr != null) {
+                return curr
+            }
+            cb()
+            return this
         }
     }
 }
