@@ -25,12 +25,11 @@ fun Int.inverse() : Float = 1f / this
 fun Float.maxScale(i : Int, n : Int) : Float = Math.max(0f, this - i * n.inverse())
 fun Float.divideScale(i : Int, n : Int) : Float = Math.min(n.inverse(), maxScale(i, n)) * n
 fun Float.sinify() : Float = Math.sin(this * Math.PI).toFloat()
-fun Float.cosify() : Float = 1f - Math.cos(Math.PI / 2 + (this) * (Math.PI / 2)).toFloat()
+fun Float.cosify() : Float = Math.sin(Math.PI / 2 + (this) * (Math.PI / 2)).toFloat()
 
 fun Canvas.drawVerticalHorizontalLine(i : Int, scale : Float, size : Float, paint : Paint) {
-    val sci : Float = scale.divideScale(i, lines)
-    val sf : Float = sci.sinify()
-    val sc : Float = sci.divideScale(1, 2).cosify()
+    val sf : Float = scale.sinify()
+    val sc : Float = scale.divideScale(1, 2).cosify()
     save()
     rotate(90f * i)
     drawLine(0f, 0f, 0f, -size * sf, paint)
@@ -52,7 +51,7 @@ fun Canvas.drawSTPBNode(i : Int, scale : Float, paint : Paint) {
     save()
     translate(gap * (i + 1), h / 2)
     for (j in 0..(lines - 1)) {
-        drawVerticalHorizontalLine(i, scale, size, paint)
+        drawVerticalHorizontalLine(j, scale, size, paint)
     }
     restore()
 }
