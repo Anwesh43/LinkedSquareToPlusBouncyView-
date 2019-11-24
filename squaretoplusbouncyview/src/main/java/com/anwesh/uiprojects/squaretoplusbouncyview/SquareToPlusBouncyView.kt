@@ -187,4 +187,26 @@ class SquareToPlusBouncyView(ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : SquareToPlusBouncyView) {
+
+        private val stpb : SquareToPlusBouncy = SquareToPlusBouncy(0)
+        private val animator : Animator = Animator(view)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(backColor)
+            stpb.draw(canvas, paint)
+            animator.animate {
+                stpb.update {
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            stpb.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
